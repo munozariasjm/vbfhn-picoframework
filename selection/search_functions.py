@@ -157,7 +157,7 @@ def selectJets(
     taus = Collection(event, "Tau")
     fatjets = Collection(event, "FatJet")
     jets = Collection(event, "Jet")
-    for ijet in range(0, len(event.nJet)):
+    for ijet in range(0, event.nJet):
         # print "jets idx pT eta phi ID %s %s %s %s %s" % (ijet,event.Jet_pt[ijet],abs(event.Jet_eta[ijet]),event.Jet_phi[ijet],event.Jet_jetId[ijet])
         # kinematic
         if not event.Jet_pt[ijet] >= 20:

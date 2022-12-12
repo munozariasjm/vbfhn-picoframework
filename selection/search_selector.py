@@ -10,8 +10,8 @@ from search_functions import *
 
 
 class declareVariables(search_variables):
-    def __init__(self) -> None:
-        super(declareVariables, self).__init__()
+    def __init__(self, name):
+        super(declareVariables, self).__init__(name)
 
 
 class Producer(Module):
@@ -85,7 +85,7 @@ class Producer(Module):
         #      effevt(passCut,self,event)
         #      return False
         #  passCut = passCut+1 #passCut = 2
-        print(f"run:lumi:evt {event.run}:{event.luminosityBlock}:{event.event}")
+        print("run:lumi:evt", event.run, event.luminosityBlock, event.event)
 
         # Taus
         taus = Collection(event, "Tau")
@@ -115,17 +115,17 @@ class Producer(Module):
         passCut = passCut + 1
         # Jets
         selectedWJetsIdx = []
-        selectFatJets(event, year, selectedTausIdx, selectedWJetsIdx)
+        selectFatJets(event, self.year, selectedTausIdx, selectedWJetsIdx)
         selectedJetsIdx = []
         selectedTightBIdx = []
         selectJets(
             event,
-            year,
+            self.year,
             selectedTausIdx,
             selectedWJetsIdx,
             selectedJetsIdx,
             selectedTightBIdx,
-            objectClearningDr,
+            self.objectClearningDr,
         )
         # Event
         self.out.run[0] = event.run
