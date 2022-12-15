@@ -5,7 +5,7 @@ from PhysicsTools.NanoAODTools.postprocessing.framework.datamodel import Collect
 
 
 def effevt(passCut, self, event):
-    passCut = passCut + 1
+    # passCut = passCut + 1
     self.out.passCut[0] = passCut
     self.out.eelumiWeight[0] = self.lumiWeight
     if self.isData:
@@ -16,8 +16,9 @@ def effevt(passCut, self, event):
 
 
 def selectTaus(event, selectedTausIdx):
+    taus = Collection(event, "Tau")
     for itau in range(event.nTau):
-        if not event.Tau_pt[itau] >= 20:
+        if not event.Tau_pt[itau] >= 45:
             continue
         if not abs(event.Tau_eta[itau]) <= 2.1:
             continue
@@ -175,19 +176,21 @@ def selectJets(
         if not event.Jet_jetId[ijet] >= jetId:
             continue
         # cleaning
+        #Cleaning from tau
         isNotTau = True
-        for itau in range(0, len(selectedTausIdx)):
-            if taus[selectedTausIdx[itau]].p4().DeltaR(jets[ijet].p4()) < 0.5:
+        for itau in range(len(selectedTausIdx)):
+            if jets[ijet].p4().DeltaR(taus[selectedTausIdx[itau]].p4())<=objectClearningDr:
                 isNotTau = False
                 break
         if not isNotTau:
             continue
+        #Cleaning W-Jets
         isNotFatJetLep = True
         for ifatjet in range(len(selectedWJetsIdx)):
-            if fatjets[selectedWJetsIdx[ifatjet]].p4().DeltaR(jets[ijet].p4()) < 0.8:
+            if fatjets[selectedWJetsIdx[ifatjet]].p4().DeltaR(jets[ijet].p4())<0.8:
                 isNotFatJetLep = False
-        if not isNotFatJetLep:
-            continue
+            if not isNotFatJetLep: continue
+
         # save idx
         selectedJetsIdx.append(ijet)
         # b-jet
