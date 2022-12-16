@@ -45,6 +45,35 @@ class search_variables(object):
         self.add_float(self.Events, "genWeight")
         self.add_float(self.Events, "lumiWeight")
 
+        self.add_float(self.Events, "Tau1_Pt")
+        self.add_float(self.Events, "Tau2_Pt")
+        self.add_float(self.Events, "Tau1Eta")
+        self.add_float(self.Events, "Tau2Eta")
+        self.add_float(self.Events, "TauDeltaPt")
+        self.add_float(self.Events, "nTau")
+        self.add_float(self.Events, "TauRecoMass")
+        self.add_float(self.Events, "ForwardTaus")
+        self.add_float(self.Events, "TauDeltaR")
+        # self.add_float(self.Events,"HeavyNu")
+        self.add_float(self.Events, "nBJet")
+        self.add_float(self.Events, "nWJet")
+        self.add_float(self.Events, "nJet")
+        self.add_float(self.Events, "nVBFs")
+        self.add_float(self.Events, "TauOSLS")
+
+        self.add_float(self.Events, "JetRecomass")
+        self.add_float(self.Events, "Jet1_Pt")
+        self.add_float(self.Events, "Jet2_Pt")
+        self.add_float(self.Events, "Jet1_Eta")
+        self.add_float(self.Events, "Jet2_Eta")
+
+        self.add_float(self.Events, "mjj")
+        self.add_float(self.Events, "VBFJet1_Pt")
+        self.add_float(self.Events, "VBFJet2_Pt")
+        self.add_float(self.Events, "VBFJet1_eta")
+        self.add_float(self.Events, "VBFJet2_eta")
+        # self.add_float(self.Events,"nWJets")
+
     def add_float(self, tree, name, dtype=np.dtype(float)):
         if hasattr(self, name):
             print('ERROR! SetBranchAddress of name "%s" already exists!' % (name))

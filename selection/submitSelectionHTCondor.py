@@ -1,9 +1,12 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 #Notes
-#1. the part "/tmp/x509up_u30997" works only on fromeo laptop. If you use this script, make sure it update it to work on your machine.
+#1. the part "/tmp/x509up_u30997" works only on fromeo laptop.
+# If you use this script, make sure it update it to work on your machine.
 #Issus with merging
 #1.
-#Error in <TFile::ReadBuffer>: error reading all requested bytes from file /eos/cms/store/group/phys_exotica/LQtop/FullRun2_30Apr/2017/mergedFiles/TTZToQQ.root, got 0 of 300
+# Error in <TFile::ReadBuffer>: error reading all requested bytes from file
+# /eos/cms/store/group/phys_exotica/LQtop/FullRun2_30Apr/2017/mergedFiles/TTZToQQ.root,
+# got 0 of 300
 #Error in <TFile::Init>: /eos/cms/store/group/phys_exotica/LQtop/FullRun2_30Apr/2017/mergedFiles/TTZToQQ.root failed to read the file type data.
 #2.
 #2018 MET_A /eos/cms/store/group/phys_exotica/LQtop/TrigEffMHT/2018/MET_A/884DAEBD-77D0-234E-BBEB-61CFD2AFB06C_Skim.root does not have hltMu50 variables and it creates a warning when merging with other tree that have it
@@ -13,7 +16,7 @@
 import os, sys, subprocess
 from commands import getoutput
 #Needed to submit the task
-passwd = os.popen('cat /afs/cern.ch/user/f/fromeo/private/vomsproxy').read().strip()
+passwd = os.popen('cat /afs/cern.ch/user/b/bsoubasi/private/vomsproxy').read().strip()
 #The dataset information
 path_fw = os.environ['CMSSW_BASE']+"/src/vbfhn-picoframework/"
 path_utils = path_fw+"utils/"
@@ -32,7 +35,7 @@ year_from_which_copy_missing_files = "2017"
 #User input
 from argparse import ArgumentParser
 parser = ArgumentParser()
-parser.add_argument('-lp',   '--lnfPath',     dest='lnfPath',     action='store', type=str, default='/cms/store/user/fromeo/') #/cms/store/user/fromeo/')
+parser.add_argument('-lp',   '--lnfPath',     dest='lnfPath',     action='store', type=str, default='/home-b/bsoubasi/Output/') #/cms/store/user/fromeo/')
 parser.add_argument('-p',    '--process',     dest='process',     action='store', choices=['local','queue','crab'], default='queue')
 parser.add_argument('-a',    '--analysis',    dest='analysis',    action='store', type=str, default='vbfhn') #Name of the analysis (e.g. VBFHN, LQtop, ...)
 parser.add_argument('-t',    '--task',        dest='task',        action='store', type=str, default='test') #Name of the task (e.g. Test, SignalRegion, ControlRegion, FullAnalysis, ...)
@@ -98,7 +101,7 @@ def main():
   print "Iterations %s " % (keep_checking_count)
   #You must initialize the proxy (and apparently more than just the first time when you run on the queue)
   os.system('echo %s | voms-proxy-init --valid 192:00 -voms cms -rfc' % (passwd)) #192 means keep the credentials valid for 192h
-  os.system("cp /tmp/x509up_u30997 %sselection" % (path_fw))
+  os.system("cp /tmp/x509up_u106282 %sselection" % (path_fw))
   #Loop over all datasets of interest
   for d in range(0,len(datasets_info)):
    os.chdir(path_at) #For every dataset come back to the folder analysis/task
@@ -120,7 +123,8 @@ def main():
    if "NANOAODSIM" in datasetName: dataType="mc"
    elif "NANOAOD" in datasetName:
     runperiod = processName.replace(datasets_info[d][1],'')
-    dataType="data"+runperiod
+    dataType="data"
+    #dataType="data"+runperiod
    else: raise ValueError('Which dataType are you using?')
    #Choose datasetFlag
    if "data" in dataType and not (datasetFlagData==datasets_info[d][1] or datasetFlagData=="All"): continue
@@ -219,7 +223,7 @@ def main():
      os.system('rm %s' % (rootFilesListFile))
      #3. get keephadd
      keephadd = False
-     if "data" in dataType and int(readevt)==datasets_info[d][5]: keephadd = True
+     if "data" in dataType and int(readevt)==datasets_info[d][5]: keephadd = False
      #if "data" in dataType: keephadd = True
      print "before mc %s %s %s %s" % (readevt,datasets_info[d][5],genevt,datasets_info[d][6])
      if "mc" in dataType and float(readevt)/float(datasets_info[d][5])>=evtThMerge and float(genevt)/float(datasets_info[d][6])>=evtThMerge: keephadd = True
@@ -478,7 +482,7 @@ def main():
    os.popen('mv %s/selection/*%s*.txt %sselection/%s/%s/txtFiles' % (path_fw,y,path_fw,analysis,task))
 
  os.chdir(path_utils)
- os.popen("sh clean.sh")
+ #os.popen("sh clean.sh")
 
  #mv all .txt file the dedicated folder
  #if not os.path.exists('%sselection/%s/%s/txtFiles' % (path_fw,analysis,task)): os.makedirs('%sselection/%s/%s/txtFiles' % (path_fw,analysis,task))
@@ -558,10 +562,10 @@ def prepareSHFile(f,fileName,year,dataType,processName,lumiWeight):
  print >> subFile, "pushd %s" % (path)
  print >> subFile, "eval `scramv1 runtime -sh`"
  print >> subFile, "popd"
- path = path+'/PicoFramework/selection'
- print >> subFile, "export X509_USER_PROXY=%s/x509up_u30997" % (path)
+ path = path+'/vbfhn-picoframework/selection'
+ print >> subFile, "export X509_USER_PROXY=%s/x509up_u106282" % (path)
  print >> subFile, "voms-proxy-info -all"
- print >> subFile, "voms-proxy-info -all -file %s/x509up_u30997" % (path)
+ print >> subFile, "voms-proxy-info -all -file %s/x509up_u106282" % (path)
  if btagEff:
   #print >> subFile, "python %s/%s_Running.py -p %s -c %s -y %s -dt %s -pn %s -lw %s -bt %s -if %s" % (path,analysis,process,channel,year,dataType,processName,lumiWeight,btagEff,f)
   print >> subFile, "python %s/search_runner.py -p %s -y %s -dt %s -if %s" % (path,process,year,dataType,f)
